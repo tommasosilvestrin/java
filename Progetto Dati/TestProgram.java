@@ -59,7 +59,7 @@ class SkipListPQ
         if (size == 0) return null;
         return skip_list.get(0).get(1);
     }
-    
+    /*
     public int insert (int key, String value)
     {
         int[] v = SkipSearch(key);
@@ -86,6 +86,42 @@ class SkipListPQ
         size++;
         return traversed_nodes;          
     }
+    */
+
+    public int insert(int key, String value) {
+        int[] v = SkipSearch(key);
+        int traversed_nodes = v[1];
+    
+        MyEntry new_entry = new MyEntry(key, value);
+        int level = generateEll(alpha, key);
+    
+        while (level >= skip_list.size()) {
+            List<MyEntry> new_level = new ArrayList<>();
+            new_level.add(new MyEntry(Integer.MIN_VALUE, "-inf"));
+            new_level.add(new MyEntry(Integer.MAX_VALUE, "+inf"));
+            skip_list.add(new_level);
+        }
+    
+        int p = 0;  // Inizializza p per il livello 0
+        for (int i = skip_list.size() - 1; i >= 0; i--) {
+            List<MyEntry> current_level = skip_list.get(i);
+    
+            // Aggiorna p`per il livello corrente
+            while (p < current_level.size() - 1 && current_level.get(p + 1).getKey() < key) {
+                p++;
+            }
+    
+            if (i <= level) {
+                current_level.add(p + 1, new_entry);  // Inserisci il nuovo elemento
+            }
+            
+            // Aggiorna l'indice `p` per il livello inferiore
+            p = Math.max(0, p - 1);
+        }
+    
+        size++;
+        return traversed_nodes;
+    }    
 
     private int[] SkipSearch (int key)
     {
@@ -178,7 +214,6 @@ class SkipListPQ
         }
         System.out.println();
     }
-    
 }
 
 public class TestProgram

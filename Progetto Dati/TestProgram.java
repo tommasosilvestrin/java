@@ -48,7 +48,7 @@ class SkipListPQ
         base_level.add(new MyEntry(Integer.MAX_VALUE, "+inf"));
         skip_list.add(base_level);
     }
-
+    
     public int size () 
     {
         return size;

@@ -7,11 +7,19 @@ class MyEntry
 {
     private Integer key;
     private String value;
+    private boolean isFake;
 
     public MyEntry (Integer key, String value)
     {
         this.key = key;
         this.value = value;
+        this.isFake = false;
+    }
+    public MyEntry (Integer key, String value, boolean isFake)
+    {
+        this.key = key;
+        this.value = value;
+        this.isFake = isFake;
     }
     public Integer getKey ()
     {
@@ -20,6 +28,10 @@ class MyEntry
     public String getValue ()
     {
         return value;
+    }
+    public boolean isFake ()
+    {
+        return isFake;
     }
     @Override
     public String toString ()
@@ -73,16 +85,16 @@ class SkipListPQ
             new_level.add(new MyEntry(Integer.MAX_VALUE, "+inf"));
             skip_list.add(new_level);
         }
-    
+
         for (int i = 0; i <= height; i++) {
             List<MyEntry> level = skip_list.get(i);
-    
+        
             while (level.size() <= p + 1) {
-                level.add(level.size() - 1, new MyEntry(Integer.MIN_VALUE, ""));
+                level.add(level.size() - 1, new MyEntry(-1, "null", true));
             }
-    
+        
             level.add(p + 1, new_entry);
-        }
+        }        
     
         size++;
         return traversed_nodes;
@@ -96,12 +108,16 @@ class SkipListPQ
         for (int i = skip_list.size() - 1; i >= 0; i--)
         {
             List<MyEntry> level = skip_list.get(i);
-            while (p < level.size() - 1 && level.get(p + 1).getKey() <= key)
-            {
+
+            while (p < level.size() - 1 && level.get(p + 1).getKey() <= key) {
                 p++;
+                if (!level.get(p).isFake())
+                    traversed_nodes++;
+            }
+
+            if (!level.get(p).isFake()) {
                 traversed_nodes++;
             }
-            traversed_nodes++;
         }
         return new int[] {p, traversed_nodes};
     }   
@@ -152,10 +168,9 @@ class SkipListPQ
     
     public void print()
     {
-        List<MyEntry> bottom_level = skip_list.get(0);
         String s = "";
-        for (int i = 1; i < bottom_level.size() - 1; i++) {
-            MyEntry entry = bottom_level.get(i);
+        for (int i = 1; i < skip_list.get(0).size() - 1; i++) {
+            MyEntry entry = skip_list.get(0).get(i);
             int height = 1;
 
             for (int j = 1; j < skip_list.size(); j++)

@@ -66,9 +66,9 @@ class SkipListPQ
         int traversed_nodes = v[1];
 
         MyEntry new_entry = new MyEntry(key, value);
-        int level = generateEll(alpha, key);
+        int height = generateEll(alpha, key);
 
-        while (level >= skip_list.size())
+        while (height >= skip_list.size())
         {
             List<MyEntry> new_level = new ArrayList<>();
             new_level.add(new MyEntry(Integer.MIN_VALUE, "-inf"));
@@ -76,14 +76,14 @@ class SkipListPQ
             skip_list.add(new_level);
         }
 
-        for (int i = 0; i <= level; i++)
+        for (int i = 0; i <= height; i++)
         {
-            List<MyEntry> current_level = skip_list.get(i);
-            current_level.add(p + 1, new_entry);
+            List<MyEntry> level = skip_list.get(i);
+            level.add(p + 1, new_entry);
         }
 
         size++;
-        return traversed_nodes;          
+        return traversed_nodes;
     }
     
     private int[] SkipSearch (int key)
@@ -100,10 +100,6 @@ class SkipListPQ
                 traversed_nodes++;
             }
             traversed_nodes++;
-            if (i > 0)
-            {
-                p = Math.max(0, p - 1);
-            }
         }
         return new int[] {p, traversed_nodes};
     }   
@@ -134,17 +130,15 @@ class SkipListPQ
         if (size == 0) return null;
         
         MyEntry min_entry = min();
-        for (int i = 0; i < skip_list.size(); i++)
+
+        int i = 0;
+        while (i < skip_list.size())
         {
-            List<MyEntry> level = skip_list.get(i);
-            if (level.contains(min_entry))
-            {
-                level.remove(min_entry);
-            }
+            if (skip_list.get(i).contains(min_entry))
+                skip_list.get(i).remove(min_entry);
             else
-            {
                 break;
-            }
+            i++;
         }
 
         while (skip_list.size() > 1 && skip_list.get(skip_list.size() - 1).size() == 2)
@@ -159,7 +153,7 @@ class SkipListPQ
     public void print()
     {
         List<MyEntry> bottom_level = skip_list.get(0);
-
+        String s = "";
         for (int i = 1; i < bottom_level.size() - 1; i++) {
             MyEntry entry = bottom_level.get(i);
             int height = 1;
@@ -169,13 +163,9 @@ class SkipListPQ
                     height++;
                 }
             }
-            System.out.print(entry.getKey() + " " + entry.getValue() + " " + height);
-            
-            if (i < bottom_level.size() - 2) {
-                System.out.print(", ");
-            }
+            s += entry.toString() + " " + height + ", ";
         }
-        System.out.println();
+        System.out.println(s);
     }
 }
 
@@ -214,7 +204,7 @@ public class TestProgram
                         }
                         break;
                     case 1:
-                        @SuppressWarnings("unused") MyEntry removedEntry = skip_list.removeMin();
+                        @SuppressWarnings("unused") MyEntry removed_entry = skip_list.removeMin();
                         break;
                     case 2:
                         int key = Integer.parseInt(line[1]);

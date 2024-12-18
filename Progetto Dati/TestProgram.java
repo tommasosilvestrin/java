@@ -3,7 +3,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
-//Class my entry
 class MyEntry
 {
     private Integer key;
@@ -142,9 +141,7 @@ class SkipListPQ
         }
 
         while (skip_list.size() > 1 && skip_list.get(skip_list.size() - 1).size() == 2)
-        {
             skip_list.remove(skip_list.size() - 1);
-        }
 
         size--;
         return min_entry;
@@ -158,11 +155,10 @@ class SkipListPQ
             MyEntry entry = bottom_level.get(i);
             int height = 1;
 
-            for (int j = 1; j < skip_list.size(); j++) {
-                if (skip_list.get(j).contains(entry)) {
+            for (int j = 1; j < skip_list.size(); j++)
+                if (skip_list.get(j).contains(entry))
                     height++;
-                }
-            }
+            
             s += entry.toString() + " " + height + ", ";
         }
         System.out.println(s);
@@ -199,9 +195,8 @@ public class TestProgram
                 {
                     case 0:
                         MyEntry min_entry = skip_list.min();
-                        if (min_entry != null) {
+                        if (min_entry != null)
                             System.out.println(min_entry);
-                        }
                         break;
                     case 1:
                         @SuppressWarnings("unused") MyEntry removed_entry = skip_list.removeMin();

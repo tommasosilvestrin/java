@@ -34,7 +34,7 @@ class SkipListPQ
     private Random rand;
     private List<List<MyEntry>> skip_list;
     private int size;
-
+    
     public SkipListPQ (double alpha)
     {
         this.alpha = alpha;
@@ -42,12 +42,12 @@ class SkipListPQ
         this.size = 0;
         this.skip_list = new ArrayList<>();
         
-        List<MyEntry> base_level = new ArrayList<>();
-        base_level.add(new MyEntry(Integer.MIN_VALUE, "-inf"));
-        base_level.add(new MyEntry(Integer.MAX_VALUE, "+inf"));
-        skip_list.add(base_level);
+        List<MyEntry> default_level = new ArrayList<>();
+        default_level.add(new MyEntry(Integer.MIN_VALUE, "-inf"));
+        default_level.add(new MyEntry(Integer.MAX_VALUE, "+inf"));
+        skip_list.add(default_level);
     }
-    
+
     public int size () 
     {
         return size;
@@ -58,32 +58,35 @@ class SkipListPQ
         if (size == 0) return null;
         return skip_list.get(0).get(1);
     }
-    public int insert (int key, String value)
-    {
+
+    public int insert(int key, String value) {
         int[] v = SkipSearch(key);
         int p = v[0];
         int traversed_nodes = v[1];
-
+    
         MyEntry new_entry = new MyEntry(key, value);
         int height = generateEll(alpha, key);
-
-        while (height >= skip_list.size())
-        {
+    
+        while (height >= skip_list.size()) {
             List<MyEntry> new_level = new ArrayList<>();
             new_level.add(new MyEntry(Integer.MIN_VALUE, "-inf"));
             new_level.add(new MyEntry(Integer.MAX_VALUE, "+inf"));
             skip_list.add(new_level);
         }
-
-        for (int i = 0; i <= height; i++)
-        {
+    
+        for (int i = 0; i <= height; i++) {
             List<MyEntry> level = skip_list.get(i);
+    
+            while (level.size() <= p + 1) {
+                level.add(level.size() - 1, new MyEntry(Integer.MIN_VALUE, ""));
+            }
+    
             level.add(p + 1, new_entry);
         }
-
+    
         size++;
         return traversed_nodes;
-    }
+    }    
     
     private int[] SkipSearch (int key)
     {
@@ -159,7 +162,7 @@ class SkipListPQ
                 if (skip_list.get(j).contains(entry))
                     height++;
             
-            s += entry.toString() + " " + height + ", ";
+            s += entry + " " + height + ", ";
         }
         System.out.println(s);
     }

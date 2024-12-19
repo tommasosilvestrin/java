@@ -98,7 +98,7 @@ class SkipListPQ
     
         size++;
         return traversed_nodes;
-    }    
+    }
     
     private int[] SkipSearch (int key)
     {

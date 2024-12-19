@@ -4,3 +4,10 @@ alphaEfficiencyTest_10K_3: 0.5 9800 10000 614.6777
 alphaEfficiencyTest_100K_1: 
 alphaEfficiencyTest_100K_2: 0.25 98000 100000 13768.01468
 alphaEfficiencyTest_100K_3: 0.5 98000 100000 8119.11592
+
+alphaEfficiencyTest_10K_1: 0.0 9800 10000 0.0
+alphaEfficiencyTest_10K_2: 0.25 9800 10000 23.2676
+alphaEfficiencyTest_10K_3: 0.5 9800 10000 25.8485
+alphaEfficiencyTest_100K_1: 0.0 98000 100000 0.0
+alphaEfficiencyTest_100K_2: 0.25 98000 100000 29.1628
+alphaEfficiencyTest_100K_3: 0.5 98000 100000 31.12179

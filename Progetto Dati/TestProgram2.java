@@ -75,33 +75,32 @@ class SkipListPQ
     public MyEntry min()
     {
         if (size == 0) return null;
-        Node currentNode = s;
-        while (currentNode.below != null)
-            currentNode = currentNode.below;
-        currentNode = currentNode.next;
-        return currentNode.getEntry();
+        Node current = s;
+        while (current.below != null)
+            current = current.below;
+        return current.next.getEntry();
     }
 
     public int insert(int key, String value)
     {
-        Node currentNode = s;
+        Node current = s;
         int traversedNodes = 0;
 
-        while (currentNode.below != null)
+        while (current.below != null)
         {
             traversedNodes++;
-            currentNode = currentNode.below;
-            while (currentNode.next.getEntry().getKey() < key)
+            current = current.below;
+            while (current.next.getEntry().getKey() < key)
             {
                 traversedNodes++;
-                currentNode = currentNode.next;
+                current = current.next;
             }
         }
 
         Node newNode = new Node(new MyEntry(key, value));
-        Node nextNode = currentNode.next;
-        currentNode.next = newNode;
-        newNode.prev = currentNode;
+        Node nextNode = current.next;
+        current.next = newNode;
+        newNode.prev = current;
         newNode.next = nextNode;
         nextNode.prev = newNode;
 
@@ -122,21 +121,21 @@ class SkipListPQ
                 s = newS;
             }
 
-            while (currentNode.above == null)
+            while (current.above == null)
             {
-                currentNode = currentNode.prev;
+                current = current.prev;
                 traversedNodes++;
             }
             traversedNodes++;
-            currentNode = currentNode.above;
+            current = current.above;
 
             Node newAboveNode = new Node(new MyEntry(key, value));
             newAboveNode.below = newNode;
             newNode.above = newAboveNode;
 
-            Node aboveNext = currentNode.next;
-            currentNode.next = newAboveNode;
-            newAboveNode.prev = currentNode;
+            Node aboveNext = current.next;
+            current.next = newAboveNode;
+            newAboveNode.prev = current;
             newAboveNode.next = aboveNext;
             aboveNext.prev = newAboveNode;
 
@@ -175,24 +174,22 @@ class SkipListPQ
     {
         if (size == 0) return null;
 
-        Node currentNode = s;
-        while (currentNode.below != null)
-        {
-            currentNode = currentNode.below;
-        }
-        currentNode = currentNode.next;
+        Node current = s;
+        while (current.below != null)
+            current = current.below;
+        current = current.next;
 
-        MyEntry min_entry = currentNode.getEntry();
+        MyEntry min_entry = current.getEntry();
         
-        while (currentNode != null)
+        while (current != null)
         {
-            Node next = currentNode.next;
-            Node prev = currentNode.prev;
+            Node next = current.next;
+            Node prev = current.prev;
             if (prev != null)
                 prev.next = next;
             if (next != null)
                 next.prev = prev;
-                currentNode = currentNode.above;
+            current = current.above;
         }
 
         while (s.below != null && s.next.getEntry().getKey() == Integer.MAX_VALUE)
@@ -208,47 +205,28 @@ class SkipListPQ
 
     public void print ()
     {
-        Node currentNode = s;
-        while (currentNode.below != null)
-        {
-            currentNode = currentNode.below;
-        }
-        currentNode = currentNode.next;
+        Node current = s;
+        while (current.below != null)
+            current = current.below;
+        current = current.next;
 
         List<String> output = new ArrayList<>();
-        while (currentNode.getEntry().getKey() != Integer.MAX_VALUE)
+        while (current.getEntry().getKey() != Integer.MAX_VALUE)
         {
             int h = 1;
-            Node temp = currentNode;
+            Node temp = current;
             while (temp.above != null)
             {
                 h++;
                 temp = temp.above;
             }
-            output.add(currentNode.getEntry().getKey() + " " + currentNode.getEntry().getValue() + " " + h);
-            currentNode = currentNode.next;            
+            output.add(current.getEntry().getKey() + " " + current.getEntry().getValue() + " " + h);
+            current = current.next;            
         }
         System.out.println(String.join(", ", output));
     }
 
-    public void printSkipList ()
-    {
-        Node currentNode = s;
-
-        while (currentNode != null)
-        {
-            Node temp = currentNode.next;
-            while (temp.getEntry().getKey() != Integer.MAX_VALUE)
-            {
-                System.out.print(temp.getEntry().getValue() + ", ");
-                temp = temp.next;
-            }
-            System.out.println();
-            currentNode = currentNode.below;
-        }
-    }
-
-    public String statistics ()
+    public String values ()
     {
         double averageTraversedNode = (double) totalTraversed / totalInserts;
         String s = alpha + " " + size + " " + totalInserts + " " + averageTraversedNode;
@@ -297,14 +275,13 @@ public class TestProgram2
                         break;
                     case 3:
                         skip_list.print();
-                        skip_list.printSkipList();
                         break;
                     default:
                         System.out.println("Invalid operation code");
                         return;
                 }
             }
-            System.out.println(skip_list.statistics());
+            System.out.println(skip_list.values());
         } catch (IOException e)
         {
             System.out.println("Error reading file: " + e.getMessage());

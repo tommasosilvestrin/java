@@ -199,7 +199,7 @@ class SkipListPQ
                 prev.next = next;
             if (next != null)
                 next.prev = prev;
-                currentNode = currentNode.above;
+            currentNode = currentNode.above;
         }
 
         while (s.below != null && s.next.getKey() == Integer.MAX_VALUE)
@@ -236,23 +236,6 @@ class SkipListPQ
             currentNode = currentNode.next;            
         }
         System.out.println(String.join(", ", output));
-    }
-
-    public void printSkipList ()
-    {
-        Node currentNode = s;
-
-        while (currentNode != null)
-        {
-            Node temp = currentNode.next;
-            while (temp.getKey() != Integer.MAX_VALUE)
-            {
-                System.out.print(temp.getValue() + ", ");
-                temp = temp.next;
-            }
-            System.out.println();
-            currentNode = currentNode.below;
-        }
     }
 
     public String statistics ()
@@ -304,7 +287,6 @@ public class TestProgram1
                         break;
                     case 3:
                         skip_list.print();
-                        skip_list.printSkipList();
                         break;
                     default:
                         System.out.println("Invalid operation code");

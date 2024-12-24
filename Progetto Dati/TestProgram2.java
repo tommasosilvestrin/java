@@ -29,24 +29,17 @@ class MyEntry
 
 class Node
 {
-    private int key;
-    private String value;
+    private MyEntry entry;
     Node prev, next, above, below;
 
-    public Node (int key, String value)
+    public Node (MyEntry entry)
     {
-        this.key = key;
-        this.value = value;
+        this.entry = entry;
     }
 
-    public int getKey ()
+    public MyEntry getEntry ()
     {
-        return key;
-    }
-
-    public String getValue ()
-    {
-        return value;
+        return entry;
     }
 }
 
@@ -64,8 +57,8 @@ class SkipListPQ
     {
         this.alpha = alpha;
         this.rand = new Random();
-        this.s = new Node(Integer.MIN_VALUE, "-inf");
-        Node inf = new Node(Integer.MAX_VALUE, "+inf");
+        this.s = new Node(new MyEntry(Integer.MIN_VALUE, "-inf"));
+        Node inf = new Node(new MyEntry(Integer.MAX_VALUE, "+inf"));
         s.next = inf;
         inf.prev = s;
         this.height = 0;
@@ -86,7 +79,7 @@ class SkipListPQ
         while (currentNode.below != null)
             currentNode = currentNode.below;
         currentNode = currentNode.next;
-        return new MyEntry(currentNode.getKey(), currentNode.getValue());
+        return currentNode.getEntry();
     }
 
     public int insert(int key, String value)
@@ -98,14 +91,14 @@ class SkipListPQ
         {
             traversedNodes++;
             currentNode = currentNode.below;
-            while (currentNode.next.getKey() < key)
+            while (currentNode.next.getEntry().getKey() < key)
             {
                 traversedNodes++;
                 currentNode = currentNode.next;
             }
         }
 
-        Node newNode = new Node(key, value);
+        Node newNode = new Node(new MyEntry(key, value));
         Node nextNode = currentNode.next;
         currentNode.next = newNode;
         newNode.prev = currentNode;
@@ -120,8 +113,8 @@ class SkipListPQ
             if (currentLevel >= height)
             {
                 height++;
-                Node newS = new Node(Integer.MIN_VALUE, "-inf");
-                Node newInf = new Node(Integer.MAX_VALUE, "+inf");
+                Node newS = new Node(new MyEntry(Integer.MIN_VALUE, "-inf"));
+                Node newInf = new Node(new MyEntry(Integer.MAX_VALUE, "+inf"));
                 newS.next = newInf;
                 newInf.prev = newS;
                 newS.below = s;
@@ -137,7 +130,7 @@ class SkipListPQ
             traversedNodes++;
             currentNode = currentNode.above;
 
-            Node newAboveNode = new Node(key, value);
+            Node newAboveNode = new Node(new MyEntry(key, value));
             newAboveNode.below = newNode;
             newNode.above = newAboveNode;
 
@@ -189,7 +182,7 @@ class SkipListPQ
         }
         currentNode = currentNode.next;
 
-        MyEntry min_entry = new MyEntry(currentNode.getKey(), currentNode.getValue());
+        MyEntry min_entry = currentNode.getEntry();
         
         while (currentNode != null)
         {
@@ -202,7 +195,7 @@ class SkipListPQ
                 currentNode = currentNode.above;
         }
 
-        while (s.below != null && s.next.getKey() == Integer.MAX_VALUE)
+        while (s.below != null && s.next.getEntry().getKey() == Integer.MAX_VALUE)
         {
             s = s.below;
             s.above = null;
@@ -223,7 +216,7 @@ class SkipListPQ
         currentNode = currentNode.next;
 
         List<String> output = new ArrayList<>();
-        while (currentNode.getKey() != Integer.MAX_VALUE)
+        while (currentNode.getEntry().getKey() != Integer.MAX_VALUE)
         {
             int h = 1;
             Node temp = currentNode;
@@ -232,7 +225,7 @@ class SkipListPQ
                 h++;
                 temp = temp.above;
             }
-            output.add(currentNode.getKey() + " " + currentNode.getValue() + " " + h);
+            output.add(currentNode.getEntry().getKey() + " " + currentNode.getEntry().getValue() + " " + h);
             currentNode = currentNode.next;            
         }
         System.out.println(String.join(", ", output));
@@ -245,9 +238,9 @@ class SkipListPQ
         while (currentNode != null)
         {
             Node temp = currentNode.next;
-            while (temp.getKey() != Integer.MAX_VALUE)
+            while (temp.getEntry().getKey() != Integer.MAX_VALUE)
             {
-                System.out.print(temp.getValue() + ", ");
+                System.out.print(temp.getEntry().getValue() + ", ");
                 temp = temp.next;
             }
             System.out.println();
@@ -263,7 +256,7 @@ class SkipListPQ
     }
 }
 
-public class TestProgram1
+public class TestProgram2
 {
     public static void main(String[] args)
     {

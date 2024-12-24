@@ -8,21 +8,21 @@ class MyEntry
     private Integer key;
     private String value;
 
-    public MyEntry(Integer key, String value) {
+    public MyEntry (Integer key, String value) {
         this.key = key;
         this.value = value;
     }
 
-    public Integer getKey() {
+    public Integer getKey () {
         return key;
     }
 
-    public String getValue() {
+    public String getValue () {
         return value;
     }
 
     @Override
-    public String toString() {
+    public String toString () {
         return key + " " + value;
     }
 }
@@ -40,6 +40,11 @@ class Node
     public MyEntry getEntry ()
     {
         return entry;
+    }
+
+    public String toString ()
+    {
+        return entry.toString();
     }
 }
 
@@ -210,7 +215,7 @@ class SkipListPQ
             current = current.below;
         current = current.next;
 
-        List<String> output = new ArrayList<>();
+        String output = "";
         while (current.getEntry().getKey() != Integer.MAX_VALUE)
         {
             int h = 1;
@@ -220,10 +225,11 @@ class SkipListPQ
                 h++;
                 temp = temp.above;
             }
-            output.add(current.getEntry().getKey() + " " + current.getEntry().getValue() + " " + h);
+            output += current + " " + h + ", ";
             current = current.next;            
         }
-        System.out.println(String.join(", ", output));
+        output = output.substring(0, output.length() - 2);
+        System.out.println(output);
     }
 
     public String values ()

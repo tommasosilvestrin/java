@@ -7,120 +7,152 @@ class MyEntry
 {
     private Integer key;
     private String value;
-    private boolean isFake;
 
-    public MyEntry (Integer key, String value)
-    {
+    public MyEntry (Integer key, String value) {
         this.key = key;
         this.value = value;
-        this.isFake = false;
     }
-    public MyEntry (Integer key, String value, boolean isFake)
-    {
-        this.key = key;
-        this.value = value;
-        this.isFake = isFake;
-    }
-    public Integer getKey ()
-    {
+
+    public Integer getKey () {
         return key;
     }
-    public String getValue ()
-    {
+
+    public String getValue () {
         return value;
     }
-    public boolean isFake ()
-    {
-        return isFake;
-    }
+
     @Override
+    public String toString () {
+        return key + " " + value;
+    }
+}
+
+class Node
+{
+    private MyEntry entry;
+    Node prev, next, above, below;
+
+    public Node (MyEntry entry)
+    {
+        this.entry = entry;
+    }
+
+    public MyEntry getEntry ()
+    {
+        return entry;
+    }
+
     public String toString ()
     {
-        return key + " " + value;
+        return entry.toString();
     }
 }
 
 class SkipListPQ
 {
+    private Node s;         // nodo sentinella superiore sinistra
+    private int height;     // altezza attuale della skip list
+    private int size;       // numero di entry della skip list
     private double alpha;
     private Random rand;
-    private List<List<MyEntry>> skip_list;
-    private int size;
-    
+    private int totalTraversed;    // somma totale dei nodi attraversati
+    private int totalInserts;      // numero totale di insert
+
     public SkipListPQ (double alpha)
     {
         this.alpha = alpha;
         this.rand = new Random();
+        this.s = new Node(new MyEntry(Integer.MIN_VALUE, "-inf"));
+        Node inf = new Node(new MyEntry(Integer.MAX_VALUE, "+inf"));
+        s.next = inf;
+        inf.prev = s;
+        this.height = 0;
         this.size = 0;
-        this.skip_list = new ArrayList<>();
-        
-        List<MyEntry> default_level = new ArrayList<>();
-        default_level.add(new MyEntry(Integer.MIN_VALUE, "-inf"));
-        default_level.add(new MyEntry(Integer.MAX_VALUE, "+inf"));
-        skip_list.add(default_level);
+        this.totalTraversed = 0;
+        this.totalInserts = 0;
     }
 
-    public int size () 
+    public int size ()
     {
         return size;
     }
 
-    public MyEntry min ()
+    public MyEntry min()
     {
         if (size == 0) return null;
-        return skip_list.get(0).get(1);
+        Node current = s;
+        while (current.below != null)
+            current = current.below;
+        return current.next.getEntry();
     }
 
-    public int insert(int key, String value) {
-        int[] v = SkipSearch(key);
-        int p = v[0];
-        int traversed_nodes = v[1];
-    
-        MyEntry new_entry = new MyEntry(key, value);
-        int height = generateEll(alpha, key);
-    
-        while (height >= skip_list.size()) {
-            List<MyEntry> new_level = new ArrayList<>();
-            new_level.add(new MyEntry(Integer.MIN_VALUE, "-inf"));
-            new_level.add(new MyEntry(Integer.MAX_VALUE, "+inf"));
-            skip_list.add(new_level);
-        }
-
-        for (int i = 0; i <= height; i++) {
-            List<MyEntry> level = skip_list.get(i);
-        
-            while (level.size() <= p + 1) {
-                level.add(level.size() - 1, new MyEntry(-1, "null", true));
-            }
-        
-            level.add(p + 1, new_entry);
-        }        
-    
-        size++;
-        return traversed_nodes;
-    }
-    
-    private int[] SkipSearch (int key)
+    public int insert(int key, String value)
     {
-        int p = 0;
-        int traversed_nodes = 0;
+        Node current = s;
+        int traversedNodes = 0;
 
-        for (int i = skip_list.size() - 1; i >= 0; i--)
+        while (current.below != null)
         {
-            List<MyEntry> level = skip_list.get(i);
-
-            while (p < level.size() - 1 && level.get(p + 1).getKey() <= key) {
-                p++;
-                if (!level.get(p).isFake())
-                    traversed_nodes++;
-            }
-
-            if (!level.get(p).isFake()) {
-                traversed_nodes++;
+            traversedNodes++;
+            current = current.below;
+            while (current.next.getEntry().getKey() < key)
+            {
+                traversedNodes++;
+                current = current.next;
             }
         }
-        return new int[] {p, traversed_nodes};
-    }   
+
+        Node newNode = new Node(new MyEntry(key, value));
+        Node nextNode = current.next;
+        current.next = newNode;
+        newNode.prev = current;
+        newNode.next = nextNode;
+        nextNode.prev = newNode;
+
+        int level = generateEll(alpha, key);
+        int currentLevel = 0;
+
+        while (currentLevel < level)
+        {
+            if (currentLevel >= height)
+            {
+                height++;
+                Node newS = new Node(new MyEntry(Integer.MIN_VALUE, "-inf"));
+                Node newInf = new Node(new MyEntry(Integer.MAX_VALUE, "+inf"));
+                newS.next = newInf;
+                newInf.prev = newS;
+                newS.below = s;
+                s.above = newS;
+                s = newS;
+            }
+
+            while (current.above == null)
+            {
+                current = current.prev;
+                traversedNodes++;
+            }
+            traversedNodes++;
+            current = current.above;
+
+            Node newAboveNode = new Node(new MyEntry(key, value));
+            newAboveNode.below = newNode;
+            newNode.above = newAboveNode;
+
+            Node aboveNext = current.next;
+            current.next = newAboveNode;
+            newAboveNode.prev = current;
+            newAboveNode.next = aboveNext;
+            aboveNext.prev = newAboveNode;
+
+            newNode = newAboveNode;
+            currentLevel++;
+        }
+
+        size++;
+        totalInserts++;
+        totalTraversed += traversedNodes;
+        return traversedNodes;
+    }
 
     private int generateEll (double alpha_, int key)
     {
@@ -146,40 +178,65 @@ class SkipListPQ
     public MyEntry removeMin()
     {
         if (size == 0) return null;
-        
-        MyEntry min_entry = min();
 
-        int i = 0;
-        while (i < skip_list.size())
+        Node current = s;
+        while (current.below != null)
+            current = current.below;
+        current = current.next;
+
+        MyEntry min_entry = current.getEntry();
+        
+        while (current != null)
         {
-            if (skip_list.get(i).contains(min_entry))
-                skip_list.get(i).remove(min_entry);
-            else
-                break;
-            i++;
+            Node next = current.next;
+            Node prev = current.prev;
+            if (prev != null)
+                prev.next = next;
+            if (next != null)
+                next.prev = prev;
+            current = current.above;
         }
 
-        while (skip_list.size() > 1 && skip_list.get(skip_list.size() - 1).size() == 2)
-            skip_list.remove(skip_list.size() - 1);
+        while (s.below != null && s.next.getEntry().getKey() == Integer.MAX_VALUE)
+        {
+            s = s.below;
+            s.above = null;
+            height--;
+        }
 
         size--;
         return min_entry;
     }
-    
-    public void print()
-    {
-        String s = "";
-        for (int i = 1; i < skip_list.get(0).size() - 1; i++) {
-            MyEntry entry = skip_list.get(0).get(i);
-            int height = 1;
 
-            for (int j = 1; j < skip_list.size(); j++)
-                if (skip_list.get(j).contains(entry))
-                    height++;
-            
-            s += entry + " " + height + ", ";
+    public void print ()
+    {
+        Node current = s;
+        while (current.below != null)
+            current = current.below;
+        current = current.next;
+
+        String output = "";
+        while (current.getEntry().getKey() != Integer.MAX_VALUE)
+        {
+            int h = 1;
+            Node temp = current;
+            while (temp.above != null)
+            {
+                h++;
+                temp = temp.above;
+            }
+            output += current + " " + h + ", ";
+            current = current.next;            
         }
-        System.out.println(s);
+        output = output.substring(0, output.length() - 2);
+        System.out.println(output);
+    }
+
+    public String values ()
+    {
+        double averageTraversedNode = (double) totalTraversed / totalInserts;
+        String s = alpha + " " + size + " " + totalInserts + " " + averageTraversedNode;
+        return s;        
     }
 }
 
@@ -201,8 +258,6 @@ public class TestProgram
             System.out.println(N + " " + alpha);
 
             SkipListPQ skip_list = new SkipListPQ(alpha);
-            int total_inserts = 0;
-            int total_traversed = 0;
 
             for (int i = 0; i < N; i++)
             {
@@ -222,9 +277,7 @@ public class TestProgram
                     case 2:
                         int key = Integer.parseInt(line[1]);
                         String value = line[2];
-                        int node_traversed = skip_list.insert(key, value);
-                        total_traversed += node_traversed;
-                        total_inserts++;
+                        skip_list.insert(key, value);
                         break;
                     case 3:
                         skip_list.print();
@@ -234,9 +287,7 @@ public class TestProgram
                         return;
                 }
             }
-
-            double average_traversed_node = (double) total_traversed / total_inserts;
-            System.out.println(alpha + " " + skip_list.size() + " " + total_inserts + " " + average_traversed_node);
+            System.out.println(skip_list.values());
         } catch (IOException e)
         {
             System.out.println("Error reading file: " + e.getMessage());

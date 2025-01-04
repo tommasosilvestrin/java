@@ -1,20 +1,6 @@
-alphaEfficiencyTest_10K_1: 0.0 9800 10000 2393.4036
-alphaEfficiencyTest_10K_2: 0.25 9800 10000 853.0846
-alphaEfficiencyTest_10K_3: 0.5 9800 10000 614.6777
-alphaEfficiencyTest_100K_1: 
-alphaEfficiencyTest_100K_2: 0.25 98000 100000 13768.01468
-alphaEfficiencyTest_100K_3: 0.5 98000 100000 8119.11592
-
 alphaEfficiencyTest_10K_1: 0.0 9800 10000 0.0
-alphaEfficiencyTest_10K_2: 0.25 9800 10000 23.2676
-alphaEfficiencyTest_10K_3: 0.5 9800 10000 25.8485
+alphaEfficiencyTest_10K_2: 0.25 9800 10000 23.5158
+alphaEfficiencyTest_10K_3: 0.5 9800 10000 24.3587
 alphaEfficiencyTest_100K_1: 0.0 98000 100000 0.0
-alphaEfficiencyTest_100K_2: 0.25 98000 100000 29.1628
-alphaEfficiencyTest_100K_3: 0.5 98000 100000 31.12179
-
-alphaEfficiencyTest_10K_1: 0.0 9800 10000 0.0
-alphaEfficiencyTest_10K_2: 0.25 9800 10000 22.1712
-alphaEfficiencyTest_10K_3: 0.5 9800 10000 26.7857
-alphaEfficiencyTest_100K_1: 0.0 98000 100000 0.0
-alphaEfficiencyTest_100K_2: 0.25 98000 100000 29.61051
-alphaEfficiencyTest_100K_3: 0.5 98000 100000 34.66228
+alphaEfficiencyTest_100K_2: 0.25 98000 100000 29.60363
+alphaEfficiencyTest_100K_3: 0.5 98000 100000 33.03008

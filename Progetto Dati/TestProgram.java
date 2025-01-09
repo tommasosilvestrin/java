@@ -27,10 +27,13 @@ class MyEntry
     }
 }
 
+// classe che rappresenta ogni nodo della SkipList, permette di "linkare" tra di loro i nodi.
+// Ogni nodo infatti è caratterizzato dalla entry che contiene ma anche dai collegamenti
+// a nodi adiacenti (precedente, successivo, superiore, inferiore)
 class Node
 {
-    private MyEntry entry;
-    Node prev, next, above, below;
+    private MyEntry entry;     // entry contenuta nel nodo
+    Node prev, next, above, below;  // nodi collegati ad un nodo
 
     public Node (MyEntry entry)
     {
@@ -64,8 +67,10 @@ class SkipListPQ
         this.rand = new Random();
         this.s = new Node(new MyEntry(Integer.MIN_VALUE, "-inf"));
         Node inf = new Node(new MyEntry(Integer.MAX_VALUE, "+inf"));
+        // collegamento tra i nodi sentinella
         s.next = inf;
         inf.prev = s;
+        // inizializzazione parametri della skipList
         this.height = 0;
         this.size = 0;
         this.totalTraversed = 0;
@@ -74,12 +79,16 @@ class SkipListPQ
 
     public int size ()
     {
-        return size;
+        return size;    // ritorna il numero di entry nella skip list
     }
 
     public MyEntry min()
     {
         if (size == 0) return null;
+
+        // A partire dal nodo sentinella s scendo fino al livello più basso.
+        // La entry con chiave minore è contenuta nel nodo successivo al
+        // nodo sentinella di sinistra del livello più basso
         Node current = s;
         while (current.below != null)
             current = current.below;
@@ -91,6 +100,9 @@ class SkipListPQ
         Node current = s;
         int traversedNodes = 0;
 
+        // A partire dal nodo sentinella s mi sposto nei vari livelli fino a quando
+        // non incontro una entry con chiave maggiore della chiave della entry da inserire.
+        // Quando la trovo mi sposto al livello inferiore e ripeto il procedimento fino al livello più basso.
         while (current.below != null)
         {
             traversedNodes++;
@@ -102,6 +114,8 @@ class SkipListPQ
             }
         }
 
+        // Ora che ho trovato la posizione in cui inserire la nuova entry, creo un nuovo nodo
+        // e faccio i doverosi collegamenti tra i due nodi precedentemente adiacenti e il nuovo nodo.
         Node newNode = new Node(new MyEntry(key, value));
         Node nextNode = current.next;
         current.next = newNode;

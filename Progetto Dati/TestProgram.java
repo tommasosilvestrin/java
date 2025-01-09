@@ -123,11 +123,13 @@ class SkipListPQ
         newNode.next = nextNode;
         nextNode.prev = newNode;
 
-        int level = generateEll(alpha, key);
+        int level = generateEll(alpha, key);    // numeri di livello in cui inserire la nuova entry
         int currentLevel = 0;
 
         while (currentLevel < level)
         {
+            // Se il livello in cui inserire la nuova entry è maggiore dell'altezza attuale
+            // creo un nuovo livello in cui inserisco solo i due nodi sentinella
             if (currentLevel >= height)
             {
                 height++;
@@ -140,6 +142,7 @@ class SkipListPQ
                 s = newS;
             }
 
+            // Mi sposto al livello superiore e cerco il nodo precedente al nodo in cui inserire la nuova entry
             while (current.above == null)
             {
                 current = current.prev;
@@ -148,6 +151,7 @@ class SkipListPQ
             traversedNodes++;
             current = current.above;
 
+            // Creo il nuovo nodo e faccio i collegamenti tra i nodi adiacenti e il nuovo nodo
             Node newAboveNode = new Node(new MyEntry(key, value));
             newAboveNode.below = newNode;
             newNode.above = newAboveNode;
@@ -162,6 +166,9 @@ class SkipListPQ
             currentLevel++;
         }
 
+        // Incremento il numero di entry nella skip list, il numero totale di insert,
+        // il totale di nodi attraversati per fare tutti gli insert
+        // e ritorno il numero di nodi attraversati per l'insert attuale
         size++;
         totalInserts++;
         totalTraversed += traversedNodes;
@@ -198,8 +205,11 @@ class SkipListPQ
             current = current.below;
         current = current.next;
 
+        // Salvo la entry da eliminare (che poi restituirò)
         MyEntry min_entry = current.getEntry();
         
+        // elimino la entry in tutti i livelli in cui è presente
+        // e faccio i nuovi collegamenti tra nodi
         while (current != null)
         {
             Node next = current.next;
@@ -211,6 +221,10 @@ class SkipListPQ
             current = current.above;
         }
 
+        // Se dopo aver eliminato la entry da tutti i livelli mi ritrovo con più
+        // di un livello vuoto (ovvero in cui sono presenti solo le due sentinelle)
+        // elimino il livello superiore e decremento l'altezza della skip list
+        // fino a quando non ho solo un livello vuoto
         while (s.below != null && s.next.getEntry().getKey() == Integer.MAX_VALUE)
         {
             s = s.below;
@@ -218,6 +232,7 @@ class SkipListPQ
             height--;
         }
 
+        // decremento il numero di entry nella skip list e restituisco la entry eliminata
         size--;
         return min_entry;
     }
@@ -225,13 +240,18 @@ class SkipListPQ
     public void print ()
     {
         Node current = s;
+        // Mi sposto alla prima entry del livello più basso
         while (current.below != null)
             current = current.below;
         current = current.next;
 
         String output = "";
+
+        // Per tutte le entry del livello più basso...
         while (current.getEntry().getKey() != Integer.MAX_VALUE)
         {
+            // Cerco l'altezza del nodo corrente fermandomi quando un nodo
+            // non ha più un superiore
             int h = 1;
             Node temp = current;
             while (temp.above != null)
@@ -246,6 +266,7 @@ class SkipListPQ
         System.out.println(output);
     }
 
+    // Metodo per stampare i parametri della SkipList
     public String values ()
     {
         double averageTraversedNode = (double) totalTraversed / totalInserts;

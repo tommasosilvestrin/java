@@ -89,37 +89,37 @@ class SkipListPQ
         // A partire dal nodo sentinella s scendo fino al livello più basso.
         // La entry con chiave minore è contenuta nel nodo successivo al
         // nodo sentinella di sinistra del livello più basso
-        Node current = s;
-        while (current.below != null)
-            current = current.below;
-        return current.next.getEntry();
+        Node currentNode = s;
+        while (currentNode.below != null)
+            currentNode = currentNode.below;
+        return currentNode.next.getEntry();
     }
 
     public int insert(int key, String value)
     {
-        Node current = s;
+        Node currentNode = s;
         int traversedNodes = 0;
 
         // A partire dal nodo sentinella s mi sposto nei vari livelli fino a quando
         // non incontro una entry con chiave maggiore della chiave della entry da inserire.
         // Quando la trovo mi sposto al livello inferiore e ripeto il procedimento fino al livello più basso.
-        while (current.below != null)
+        while (currentNode.below != null)
         {
             traversedNodes++;
-            current = current.below;
-            while (current.next.getEntry().getKey() < key)
+            currentNode = currentNode.below;
+            while (currentNode.next.getEntry().getKey() < key)
             {
                 traversedNodes++;
-                current = current.next;
+                currentNode = currentNode.next;
             }
         }
 
         // Ora che ho trovato la posizione in cui inserire la nuova entry, creo un nuovo nodo
         // e faccio i doverosi collegamenti tra i due nodi precedentemente adiacenti e il nuovo nodo.
         Node newNode = new Node(new MyEntry(key, value));
-        Node nextNode = current.next;
-        current.next = newNode;
-        newNode.prev = current;
+        Node nextNode = currentNode.next;
+        currentNode.next = newNode;
+        newNode.prev = currentNode;
         newNode.next = nextNode;
         nextNode.prev = newNode;
 
@@ -143,24 +143,24 @@ class SkipListPQ
             }
 
             // Mi sposto al livello superiore e cerco il nodo precedente al nodo in cui inserire la nuova entry
-            while (current.above == null)
+            while (currentNode.above == null)
             {
-                current = current.prev;
+                currentNode = currentNode.prev;
                 traversedNodes++;
             }
             traversedNodes++;
-            current = current.above;
+            currentNode = currentNode.above;
 
             // Creo il nuovo nodo e faccio i collegamenti tra i nodi adiacenti e il nuovo nodo
             Node newAboveNode = new Node(new MyEntry(key, value));
             newAboveNode.below = newNode;
             newNode.above = newAboveNode;
 
-            Node aboveNext = current.next;
-            current.next = newAboveNode;
-            newAboveNode.prev = current;
-            newAboveNode.next = aboveNext;
-            aboveNext.prev = newAboveNode;
+            Node aboveNextNode = currentNode.next;
+            currentNode.next = newAboveNode;
+            newAboveNode.prev = currentNode;
+            newAboveNode.next = aboveNextNode;
+            aboveNextNode.prev = newAboveNode;
 
             newNode = newAboveNode;
             currentLevel++;
@@ -200,25 +200,25 @@ class SkipListPQ
     {
         if (size == 0) return null;
 
-        Node current = s;
-        while (current.below != null)
-            current = current.below;
-        current = current.next;
+        Node currentNode = s;
+        while (currentNode.below != null)
+            currentNode = currentNode.below;
+        currentNode = currentNode.next;
 
         // Salvo la entry da eliminare (che poi restituirò)
-        MyEntry min_entry = current.getEntry();
+        MyEntry min_entry = currentNode.getEntry();
         
         // elimino la entry in tutti i livelli in cui è presente
         // e faccio i nuovi collegamenti tra nodi
-        while (current != null)
+        while (currentNode != null)
         {
-            Node next = current.next;
-            Node prev = current.prev;
-            if (prev != null)
-                prev.next = next;
-            if (next != null)
-                next.prev = prev;
-            current = current.above;
+            Node nextNode = currentNode.next;
+            Node prevNode = currentNode.prev;
+            if (prevNode != null)
+                prevNode.next = nextNode;
+            if (nextNode != null)
+                nextNode.prev = prevNode;
+            currentNode = currentNode.above;
         }
 
         // Se dopo aver eliminato la entry da tutti i livelli mi ritrovo con più
@@ -239,28 +239,28 @@ class SkipListPQ
 
     public void print ()
     {
-        Node current = s;
+        Node currentNode = s;
         // Mi sposto alla prima entry del livello più basso
-        while (current.below != null)
-            current = current.below;
-        current = current.next;
+        while (currentNode.below != null)
+            currentNode = currentNode.below;
+        currentNode = currentNode.next;
 
         String output = "";
 
         // Per tutte le entry del livello più basso...
-        while (current.getEntry().getKey() != Integer.MAX_VALUE)
+        while (currentNode.getEntry().getKey() != Integer.MAX_VALUE)
         {
             // Cerco l'altezza del nodo corrente fermandomi quando un nodo
             // non ha più un superiore
             int h = 1;
-            Node temp = current;
+            Node temp = currentNode;
             while (temp.above != null)
             {
                 h++;
                 temp = temp.above;
             }
-            output += current + " " + h + ", ";
-            current = current.next;            
+            output += currentNode + " " + h + ", ";
+            currentNode = currentNode.next;            
         }
         output = output.substring(0, output.length() - 2);
         System.out.println(output);

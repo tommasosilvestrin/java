@@ -27,7 +27,7 @@ class MyEntry
     }
 }
 
-// classe che rappresenta ogni nodo della SkipList, permette di "linkare" tra di loro i nodi.
+// Classe che rappresenta ogni nodo della SkipList, permette di "linkare" tra di loro i nodi.
 // Ogni nodo infatti è caratterizzato dalla entry che contiene ma anche dai collegamenti
 // a nodi adiacenti (precedente, successivo, superiore, inferiore)
 class Node

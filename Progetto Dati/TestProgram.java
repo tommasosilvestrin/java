@@ -38,8 +38,10 @@ class Node
     public Node (MyEntry entry)
     {
         this.entry = entry;
+        initializeNearNodes();
     }
 
+    // metodo getter per ottenere l'entry contenuta nel nodo
     public MyEntry getEntry ()
     {
         return entry;
@@ -48,6 +50,11 @@ class Node
     public String toString ()
     {
         return entry.toString();
+    }
+
+    private void initializeNearNodes ()
+    {
+        prev = next = above = below = null;
     }
 }
 
@@ -209,7 +216,8 @@ class SkipListPQ
         MyEntry min_entry = currentNode.getEntry();
         
         // elimino la entry in tutti i livelli in cui è presente
-        // e faccio i nuovi collegamenti tra nodi
+        // collegando tra loro il precedente e il successivo
+        // si tratta di una eliminazione "nascosta"
         while (currentNode != null)
         {
             Node nextNode = currentNode.next;
@@ -322,7 +330,8 @@ public class TestProgram
                         return;
                 }
             }
-            System.out.println(skip_list.values());
+            String s = skip_list.values();
+            System.out.println(s);
         } catch (IOException e)
         {
             System.out.println("Error reading file: " + e.getMessage());

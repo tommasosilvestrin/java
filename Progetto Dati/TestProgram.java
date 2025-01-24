@@ -158,11 +158,12 @@ class SkipListPQ
             traversedNodes++;
             currentNode = currentNode.above;
 
-            // Creo il nuovo nodo e faccio i collegamenti tra i nodi adiacenti e il nuovo nodo
+            // Creo il nuovo nodo e faccio i collegamenti tra il nodo nuovo e i nodi superiori ed inferiori...
             Node newAboveNode = new Node(new MyEntry(key, value));
             newAboveNode.below = newNode;
             newNode.above = newAboveNode;
-
+            
+            // ... e tra i nodi adiacenti al nodo in cui inserire la nuova entry
             Node aboveNextNode = currentNode.next;
             currentNode.next = newAboveNode;
             newAboveNode.prev = currentNode;
@@ -179,7 +180,7 @@ class SkipListPQ
         size++;
         totalInserts++;
         totalTraversed += traversedNodes;
-        return traversedNodes;
+        return traversedNodes;  // ritorno il numero di nodi attraversati per fare l'insert della entry in tutti i livelli necessari
     }
 
     private int generateEll (double alpha_, int key)
